@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Copyright (c) 2020 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 
@@ -26,7 +26,23 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-docker pull devrt/xserver
-docker pull devrt/ros-devcontainer-vscode:melodic-desktop
-cd palbator_tmc_simulator
-./build.sh
+set -e
+
+IMAGE_NAME="palbator_tmc_simulator"
+
+BUILD_DATE=`date +%Y%m%d`
+BUILD_ARGS=""
+
+if [[ -n "${http_proxy}" ]]; then
+    BUILD_ARGS="${BUILD_ARGS} --build-arg http_proxy=${http_proxy}"
+fi
+if [[ -n "${https_proxy}" ]]; then
+    BUILD_ARGS="${BUILD_ARGS} --build-arg https_proxy=${https_proxy}"
+fi
+if [[ -n "${no_proxy}" ]]; then
+    BUILD_ARGS="${BUILD_ARGS} --build-arg no_proxy=${no_proxy}"
+fi
+
+docker build ${BUILD_ARGS} -t ${IMAGE_NAME}:latest . # -t ${IMAGE_NAME}:${BUILD_DATE}
+docker build ${BUILD_ARGS} --build-arg BASE_IMAGE=${IMAGE_NAME}:latest -f Dockerfile.nvidia -t ${IMAGE_NAME}:nvidia . # -t ${IMAGE_NAME}:nvidia-${BUILD_DATE}
+docker build ${BUILD_ARGS} --build-arg BASE_IMAGE=${IMAGE_NAME}:latest -f Dockerfile.forclass -t ${IMAGE_NAME}:forclass . # -t ${IMAGE_NAME}:forclass-${BUILD_DATE}

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Copyright (c) 2020 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 
@@ -25,8 +25,15 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+set -e
+source /opt/ros/$ROS_DISTRO/setup.bash
+source /root/wrs_ws/devel/setup.bash
+source /usr/share/gazebo/setup.sh
 
-docker pull devrt/xserver
-docker pull devrt/ros-devcontainer-vscode:melodic-desktop
-cd palbator_tmc_simulator
-./build.sh
+# make rosmaster accesible from the host
+export ROS_IP=`hostname -i`
+
+# reject access to gazebo service from external host
+export GAZEBO_IP_WHITE_LIST="127.0.0.1"
+
+exec "$@"
