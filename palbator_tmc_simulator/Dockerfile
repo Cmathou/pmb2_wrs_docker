@@ -88,6 +88,7 @@ RUN cd /root/wrs_ws/src &&\
 #RUN cd /root/wrs_ws && source /opt/ros/$ROS_DISTRO/setup.bash && catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0
 
 RUN cd /root/wrs_ws && source /opt/ros/$ROS_DISTRO/setup.bash && catkin build
+COPY map/ /root/.pal/pmb2_maps/configurations/wrs2020/.
 
 ADD entrypoint-wrs.sh /entrypoint.sh
 
